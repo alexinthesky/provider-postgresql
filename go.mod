@@ -1,4 +1,4 @@
-module github.com/upbound/upjet-provider-template
+module github.com/alexinthesky/provider-postgresql
 
 go 1.19
 
