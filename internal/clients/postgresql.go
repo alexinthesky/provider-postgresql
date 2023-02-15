@@ -25,6 +25,14 @@ const (
 	errTrackUsage           = "cannot track ProviderConfig usage"
 	errExtractCredentials   = "cannot extract credentials"
 	errUnmarshalCredentials = "cannot unmarshal postgresql credentials as JSON"
+	// config keys
+	keyHost           = "host"
+	keyPort           = "port"
+	keyDatabase       = "database"
+	keyUsername       = "username"
+	keyPassword       = "password"
+	keySslMode        = "sslmode"
+	keyConnectTimeout = "connect_timeout"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -63,10 +71,28 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 
 		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		ps.Configuration = map[string]any{}
+		if v, ok := creds[keyHost]; ok {
+			ps.Configuration["keyHost"] = v
+		}
+		if v, ok := creds[keyPort]; ok {
+			ps.Configuration["keyPort"] = v
+		}
+		if v, ok := creds[keyDatabase]; ok {
+			ps.Configuration["keyDatabase"] = v
+		}
+		if v, ok := creds[keyUsername]; ok {
+			ps.Configuration["keyUsername"] = v
+		}
+		if v, ok := creds[keyPassword]; ok {
+			ps.Configuration["keyPassword"] = v
+		}
+		if v, ok := creds[keySslMode]; ok {
+			ps.Configuration["keySslMode"] = v
+		}
+		if v, ok := creds[keyConnectTimeout]; ok {
+			ps.Configuration["keyConnectTimeout"] = v
+		}
 		return ps, nil
 	}
 }

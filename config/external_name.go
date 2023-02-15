@@ -9,8 +9,10 @@ import "github.com/upbound/upjet/pkg/config"
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 var ExternalNameConfigs = map[string]config.ExternalName{
-	// Import requires using a randomly generated ID from provider: nl-2e21sda
-	"null_resource": config.IdentifierFromProvider,
+	"postgresql_database":  config.NameAsIdentifier,
+	"postgresql_role":      config.NameAsIdentifier,
+	"postgresql_grant":     config.NameAsIdentifier,
+	"postgresql_extension": config.IdentifierFromProvider,
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

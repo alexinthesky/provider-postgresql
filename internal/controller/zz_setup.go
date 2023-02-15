@@ -9,7 +9,10 @@ import (
 
 	"github.com/upbound/upjet/pkg/controller"
 
-	resource "github.com/alexinthesky/provider-postgresql/internal/controller/null/resource"
+	database "github.com/alexinthesky/provider-postgresql/internal/controller/postgresql/database"
+	extension "github.com/alexinthesky/provider-postgresql/internal/controller/postgresql/extension"
+	grant "github.com/alexinthesky/provider-postgresql/internal/controller/postgresql/grant"
+	role "github.com/alexinthesky/provider-postgresql/internal/controller/postgresql/role"
 	providerconfig "github.com/alexinthesky/provider-postgresql/internal/controller/providerconfig"
 )
 
@@ -17,7 +20,10 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		resource.Setup,
+		database.Setup,
+		extension.Setup,
+		grant.Setup,
+		role.Setup,
 		providerconfig.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {

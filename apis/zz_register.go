@@ -10,7 +10,7 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/alexinthesky/provider-postgresql/apis/null/v1alpha1"
+	v1alpha1 "github.com/alexinthesky/provider-postgresql/apis/postgresql/v1alpha1"
 	v1alpha1apis "github.com/alexinthesky/provider-postgresql/apis/v1alpha1"
 	v1beta1 "github.com/alexinthesky/provider-postgresql/apis/v1beta1"
 )
