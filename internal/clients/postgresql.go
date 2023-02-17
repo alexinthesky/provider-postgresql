@@ -66,6 +66,8 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			pc.Spec.SSLMode = "require"
 		}
 
+		ps.Configuration[keySslMode] = pc.Spec.SSLMode
+
 		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		hostSecret.SecretRef.Key = keyHost
 		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
