@@ -6,7 +6,7 @@ package clients
 
 import (
 	"context"
-	"encoding/base64"
+	"strconv"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
@@ -63,50 +63,38 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		ps.Configuration = map[string]any{}
 		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		hostSecret.SecretRef.Key = keyHost
-		hostValueb64, err := resource.ExtractSecret(ctx, client, hostSecret)
+		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		hostValue, err := base64.StdEncoding.DecodeString(string(hostValueb64))
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials+string(hostValueb64))
-		}
-		ps.Configuration[keyHost] = hostValue
+
+		ps.Configuration[keyHost] = string(hostValue)
 
 		portSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		portSecret.SecretRef.Key = keyPort
-		portValueb64, err := resource.ExtractSecret(ctx, client, portSecret)
+		portValue, err := resource.ExtractSecret(ctx, client, portSecret)
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		portValue, err := base64.StdEncoding.DecodeString(string(portValueb64))
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials+string(portValueb64))
-		}
-		ps.Configuration[keyPort] = string(portValue)
+
+		ps.Configuration[keyPort], err = strconv.Atoi(string(portValue))
 
 		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		usernameSecret.SecretRef.Key = keyUsername
-		usernameValueb64, err := resource.ExtractSecret(ctx, client, usernameSecret)
+		usernameValue, err := resource.ExtractSecret(ctx, client, usernameSecret)
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		usernameValue, err := base64.StdEncoding.DecodeString(string(usernameValueb64))
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
-		}
+
 		ps.Configuration[keyUsername] = usernameValue
 
 		passwordSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		passwordSecret.SecretRef.Key = keyPassword
-		passwordValueb64, err := resource.ExtractSecret(ctx, client, passwordSecret)
+		passwordValue, err := resource.ExtractSecret(ctx, client, passwordSecret)
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		passwordValue, err := base64.StdEncoding.DecodeString(string(passwordValueb64))
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
-		}
+
 		ps.Configuration[keyPassword] = passwordValue
 
 		// creds := map[string]string{}
