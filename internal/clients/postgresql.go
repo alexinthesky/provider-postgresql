@@ -58,7 +58,7 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		if err := t.Track(ctx, mg); err != nil {
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
-
+		ps.Configuration = map[string]any{}
 		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		hostSecret.SecretRef.Key = keyHost
 		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
