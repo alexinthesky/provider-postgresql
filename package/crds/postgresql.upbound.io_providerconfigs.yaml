@@ -100,6 +100,18 @@ spec:
                 required:
                 - source
                 type: object
+              host:
+                description: Host
+                type: string
+              port:
+                type: integer
+              sslmode:
+                enum:
+                - disable
+                - require
+                - verify-ca
+                - verify-full
+                type: string
             required:
             - credentials
             type: object
