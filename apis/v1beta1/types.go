@@ -14,6 +14,14 @@ import (
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
+	// Endpoint is where you can override the default endpoint configuration
+	// of AWS calls made by the provider.
+	Host string `json:"host,omitempty"`
+	// +optional
+	Port int `json:"port,omitempty"`
+	// +optional
+	// +kubebuilder:validation:Enum=disable;require;verify-ca;verify-full
+	SSLMode string `json:"sslmode,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.
