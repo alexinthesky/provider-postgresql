@@ -69,7 +69,7 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 		hostValue, err := base64.StdEncoding.DecodeString(string(hostValueb64))
 		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
+			return ps, errors.Wrap(err, errExtractCredentials+string(hostValueb64))
 		}
 		ps.Configuration[keyHost] = hostValue
 
@@ -81,9 +81,9 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 		portValue, err := base64.StdEncoding.DecodeString(string(portValueb64))
 		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
+			return ps, errors.Wrap(err, errExtractCredentials+string(portValueb64))
 		}
-		ps.Configuration[keyPort] = portValue
+		ps.Configuration[keyPort] = string(portValue)
 
 		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		usernameSecret.SecretRef.Key = keyUsername
