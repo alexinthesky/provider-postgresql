@@ -100,11 +100,6 @@ spec:
                 required:
                 - source
                 type: object
-              host:
-                description: Host
-                type: string
-              port:
-                type: integer
               sslmode:
                 enum:
                 - disable

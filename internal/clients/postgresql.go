@@ -6,6 +6,7 @@ package clients
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
@@ -61,15 +62,29 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		ps.Configuration = map[string]any{}
 
-		if pc.Spec.Host == "" {
-			return ps, errors.Wrap(nil, errGetProviderConfig)
-		}
-		ps.Configuration[keyHost] = pc.Spec.Host
 		if pc.Spec.SSLMode == "" {
 			pc.Spec.SSLMode = "require"
 		}
-		if pc.Spec.Port == 0 {
-			pc.Spec.Port = 5432
+
+		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		hostSecret.SecretRef.Key = keyHost
+		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+
+		ps.Configuration[keyHost] = string(hostValue)
+
+		portSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		portSecret.SecretRef.Key = keyPort
+		portValue, err := resource.ExtractSecret(ctx, client, portSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+		ps.Configuration[keyPort], err = strconv.Atoi(string(portValue))
+
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
 		}
 
 		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors

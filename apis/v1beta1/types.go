@@ -14,10 +14,6 @@ import (
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
-	// Host
-	Host string `json:"host,omitempty"`
-	// +optional
-	Port int `json:"port,omitempty"`
 	// +optional
 	// +kubebuilder:validation:Enum=disable;require;verify-ca;verify-full
 	SSLMode string `json:"sslmode,omitempty"`
