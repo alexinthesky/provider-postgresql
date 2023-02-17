@@ -10,6 +10,13 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+const (
+	// CredentialsSourcePostgreSQLConnectionSecret indicates that a provider
+	// should acquire credentials from a connection secret written by a managed
+	// resource that represents a PostgreSQL server.
+	CredentialsSourcePostgreSQLConnectionSecret xpv1.CredentialsSource = "PostgreSQLConnectionSecret"
+)
+
 // A ProviderConfigSpec defines the desired state of a ProviderConfig.
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.

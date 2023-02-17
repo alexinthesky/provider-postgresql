@@ -6,16 +6,14 @@ package clients
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/upbound/upjet/pkg/terraform"
-
 	"github.com/alexinthesky/provider-postgresql/apis/v1beta1"
+	"github.com/upbound/upjet/pkg/terraform"
 )
 
 const (
@@ -61,38 +59,66 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
 
-		data, err := resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, client, pc.Spec.Credentials.CommonCredentialSelectors)
+		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		hostSecret.SecretRef.Key = keyHost
+		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		creds := map[string]string{}
-		if err := json.Unmarshal(data, &creds); err != nil {
-			return ps, errors.Wrap(err, errUnmarshalCredentials)
-		}
+		ps.Configuration[keyHost] = hostValue
 
-		// Set credentials in Terraform provider configuration.
-		ps.Configuration = map[string]any{}
-		if v, ok := creds[keyHost]; ok {
-			ps.Configuration["keyHost"] = v
+		portSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		portSecret.SecretRef.Key = keyPort
+		portValue, err := resource.ExtractSecret(ctx, client, portSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		if v, ok := creds[keyPort]; ok {
-			ps.Configuration["keyPort"] = v
+		ps.Configuration[keyPort] = portValue
+
+		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		usernameSecret.SecretRef.Key = keyUsername
+		usernameValue, err := resource.ExtractSecret(ctx, client, usernameSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		if v, ok := creds[keyDatabase]; ok {
-			ps.Configuration["keyDatabase"] = v
+		ps.Configuration[keyUsername] = usernameValue
+
+		passwordSecret := pc.Spec.Credentials.CommonCredentialSelectors
+		passwordSecret.SecretRef.Key = keyPassword
+		passwordValue, err := resource.ExtractSecret(ctx, client, passwordSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		if v, ok := creds[keyUsername]; ok {
-			ps.Configuration["keyUsername"] = v
-		}
-		if v, ok := creds[keyPassword]; ok {
-			ps.Configuration["keyPassword"] = v
-		}
-		if v, ok := creds[keySslMode]; ok {
-			ps.Configuration["keySslMode"] = v
-		}
-		if v, ok := creds[keyConnectTimeout]; ok {
-			ps.Configuration["keyConnectTimeout"] = v
-		}
+		ps.Configuration[keyPassword] = passwordValue
+
+		// creds := map[string]string{}
+		// if err := json.Unmarshal(data, &creds); err != nil {
+		// 	return ps, errors.Wrap(err, errUnmarshalCredentials)
+		// }
+
+		// // Set credentials in Terraform provider configuration.
+		// ps.Configuration = map[string]any{}
+		// if v, ok := creds[keyHost]; ok {
+		// 	ps.Configuration["keyHost] = v
+		// }
+		// if v, ok := creds[keyPort]; ok {
+		// 	ps.Configuration["keyPort"] = v
+		// }
+		// if v, ok := creds[keyDatabase]; ok {
+		// 	ps.Configuration["keyDatabase"] = v
+		// }
+		// if v, ok := creds[keyUsername]; ok {
+		// 	ps.Configuration["keyUsername"] = v
+		// }
+		// if v, ok := creds[keyPassword]; ok {
+		// 	ps.Configuration["keyPassword"] = v
+		// }
+		// if v, ok := creds[keySslMode]; ok {
+		// 	ps.Configuration["keySslMode"] = v
+		// }
+		// if v, ok := creds[keyConnectTimeout]; ok {
+		// 	ps.Configuration["keyConnectTimeout"] = v
+		// }
 		return ps, nil
 	}
 }
