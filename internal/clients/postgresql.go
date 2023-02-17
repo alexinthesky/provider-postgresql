@@ -86,7 +86,7 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
 
-		ps.Configuration[keyUsername] = usernameValue
+		ps.Configuration[keyUsername] = string(usernameValue)
 
 		passwordSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		passwordSecret.SecretRef.Key = keyPassword
@@ -95,7 +95,7 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
 
-		ps.Configuration[keyPassword] = passwordValue
+		ps.Configuration[keyPassword] = string(passwordValue)
 
 		// creds := map[string]string{}
 		// if err := json.Unmarshal(data, &creds); err != nil {
