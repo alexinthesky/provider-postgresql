@@ -61,9 +61,16 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		ps.Configuration = map[string]any{}
 
+		if pc.Spec.Host == "" {
+			return ps, errors.Wrap(nil, errGetProviderConfig)
+		}
 		ps.Configuration[keyHost] = pc.Spec.Host
-		ps.Configuration[keyPort] = pc.Spec.Port
-		ps.Configuration[keySslMode] = pc.Spec.SSLMode
+		if pc.Spec.SSLMode == "" {
+			pc.Spec.SSLMode = "require"
+		}
+		if pc.Spec.Port == 0 {
+			pc.Spec.Port = 5432
+		}
 
 		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		usernameSecret.SecretRef.Key = keyUsername
