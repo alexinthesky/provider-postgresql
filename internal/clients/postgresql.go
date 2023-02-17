@@ -6,6 +6,7 @@ package clients
 
 import (
 	"context"
+	"encoding/base64"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
@@ -58,10 +59,15 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		if err := t.Track(ctx, mg); err != nil {
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
+
 		ps.Configuration = map[string]any{}
 		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		hostSecret.SecretRef.Key = keyHost
-		hostValue, err := resource.ExtractSecret(ctx, client, hostSecret)
+		hostValueb64, err := resource.ExtractSecret(ctx, client, hostSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+		hostValue, err := base64.StdEncoding.DecodeString(string(hostValueb64))
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
@@ -69,7 +75,11 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		portSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		portSecret.SecretRef.Key = keyPort
-		portValue, err := resource.ExtractSecret(ctx, client, portSecret)
+		portValueb64, err := resource.ExtractSecret(ctx, client, portSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+		portValue, err := base64.StdEncoding.DecodeString(string(portValueb64))
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
@@ -77,7 +87,11 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		usernameSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		usernameSecret.SecretRef.Key = keyUsername
-		usernameValue, err := resource.ExtractSecret(ctx, client, usernameSecret)
+		usernameValueb64, err := resource.ExtractSecret(ctx, client, usernameSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+		usernameValue, err := base64.StdEncoding.DecodeString(string(usernameValueb64))
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
@@ -85,7 +99,11 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		passwordSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		passwordSecret.SecretRef.Key = keyPassword
-		passwordValue, err := resource.ExtractSecret(ctx, client, passwordSecret)
+		passwordValueb64, err := resource.ExtractSecret(ctx, client, passwordSecret)
+		if err != nil {
+			return ps, errors.Wrap(err, errExtractCredentials)
+		}
+		passwordValue, err := base64.StdEncoding.DecodeString(string(passwordValueb64))
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
