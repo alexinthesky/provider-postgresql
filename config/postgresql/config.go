@@ -11,11 +11,9 @@ import (
 // Configure configures the null group
 func Configure(p *ujconfig.Provider) {
 	p.AddResourceConfigurator("postgresql_database", func(r *ujconfig.Resource) {
-		r.Kind = "Resource"
-		// And other overrides.
+		r.UseAsync = true
 	})
 	p.AddResourceConfigurator("postgresql_role", func(r *ujconfig.Resource) {
-		r.Kind = "Resource"
-		// And other overrides.
+		r.UseAsync = true
 	})
 }
