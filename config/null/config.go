@@ -2,7 +2,7 @@
 Copyright 2021 Upbound Inc.
 */
 
-package null
+package postgresql
 
 import (
 	ujconfig "github.com/upbound/upjet/pkg/config"
@@ -10,7 +10,11 @@ import (
 
 // Configure configures the null group
 func Configure(p *ujconfig.Provider) {
-	p.AddResourceConfigurator("null_resource", func(r *ujconfig.Resource) {
+	p.AddResourceConfigurator("postgresql_database", func(r *ujconfig.Resource) {
+		r.Kind = "Resource"
+		// And other overrides.
+	})
+	p.AddResourceConfigurator("postgresql_role", func(r *ujconfig.Resource) {
 		r.Kind = "Resource"
 		// And other overrides.
 	})

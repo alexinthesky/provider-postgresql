@@ -10,7 +10,7 @@ import (
 
 	ujconfig "github.com/upbound/upjet/pkg/config"
 
-	"github.com/alexinthesky/provider-postgresql/config/null"
+	postgresql "github.com/alexinthesky/provider-postgresql/config/postgresql"
 )
 
 const (
@@ -34,7 +34,7 @@ func GetProvider() *ujconfig.Provider {
 
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
-		null.Configure,
+		postgresql.Configure,
 	} {
 		configure(pc)
 	}
