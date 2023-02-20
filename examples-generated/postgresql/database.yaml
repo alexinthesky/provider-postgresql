@@ -1,4 +1,4 @@
-apiVersion: postgresql.postgresql.upbound.io/v1alpha1
+apiVersion: postgresql.upbound.io/v1alpha1
 kind: Database
 metadata:
   annotations:

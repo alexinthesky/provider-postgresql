@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: roles.postgresql.postgresql.upbound.io
+  name: grants.postgresql.upbound.io
 spec:
-  group: postgresql.postgresql.upbound.io
+  group: postgresql.upbound.io
   names:
     categories:
     - crossplane
     - managed
     - postgresql
-    kind: Role
-    listKind: RoleList
-    plural: roles
-    singular: role
+    kind: Grant
+    listKind: GrantList
+    plural: grants
+    singular: grant
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,8 +35,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Role is the Schema for the Roles API. Creates and manages a role
-          on a PostgreSQL server.
+        description: Grant is the Schema for the Grants API. Creates and manages privileges
+          given to a user for a database schema.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -51,7 +51,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: RoleSpec defines the desired state of Role
+            description: GrantSpec defines the desired state of Grant
             properties:
               deletionPolicy:
                 default: Delete
@@ -64,136 +64,56 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  assumeRole:
-                    description: Defines the role to switch to at login via SET ROLE.
-                      Role to switch to at login
+                  database:
+                    description: The database to grant privileges on for this role.
+                      The database to grant privileges on for this role
                     type: string
-                  bypassRowLevelSecurity:
-                    description: Defines whether a role bypasses every row-level security
-                      (RLS) policy.  Default value is false. Determine whether a role
-                      bypasses every row-level security (RLS) policy
-                    type: boolean
-                  connectionLimit:
-                    description: If this role can log in, this specifies how many
-                      concurrent connections the role can establish. -1 (the default)
-                      means no limit. How many concurrent connections can be made
-                      with this role
-                    type: number
-                  createDatabase:
-                    description: Defines a role's ability to execute CREATE DATABASE.  Default
-                      value is false. Define a role's ability to create databases
-                    type: boolean
-                  createRole:
-                    description: Defines a role's ability to execute CREATE ROLE.
-                      A role with this privilege can also alter and drop other roles.  Default
-                      value is false. Determine whether this role will be permitted
-                      to create new roles
-                    type: boolean
-                  encrypted:
+                  objectType:
+                    description: 'The PostgreSQL object type to grant the privileges
+                      on (one of: database, schema, table, sequence, function, procedure,
+                      routine, foreign_data_wrapper, foreign_server). The PostgreSQL
+                      object type to grant the privileges on (one of: database, function,
+                      procedure, routine, schema, sequence, table, foreign_data_wrapper,
+                      foreign_server)'
                     type: string
-                  encryptedPassword:
-                    description: 'Defines whether the password is stored encrypted
-                      in the system catalogs.  Default value is true.  NOTE: this
-                      value is always set (to the conservative and safe value), but
-                      may interfere with the behavior of PostgreSQL''s . Control whether
-                      the password is stored encrypted in the system catalogs'
-                    type: boolean
-                  idleInTransactionSessionTimeout:
-                    description: Terminate any session with an open transaction that
-                      has been idle for longer than the specified duration in milliseconds
-                    type: number
-                  inherit:
-                    description: Defines whether a role "inherits" the privileges
-                      of roles it is a member of.  Default value is true. Determine
-                      whether a role "inherits" the privileges of roles it is a member
-                      of
-                    type: boolean
-                  login:
-                    description: Defines whether role is allowed to log in.  Roles
-                      without this attribute are useful for managing database privileges,
-                      but are not users in the usual sense of the word.  Default value
-                      is false. Determine whether a role is allowed to log in
-                    type: boolean
-                  passwordSecretRef:
-                    description: Sets the role's password. A password is only of use
-                      for roles having the login attribute set to true. Sets the role's
-                      password
-                    properties:
-                      key:
-                        description: The key to select.
-                        type: string
-                      name:
-                        description: Name of the secret.
-                        type: string
-                      namespace:
-                        description: Namespace of the secret.
-                        type: string
-                    required:
-                    - key
-                    - name
-                    - namespace
-                    type: object
-                  replication:
-                    description: Defines whether a role is allowed to initiate streaming
-                      replication or put the system in and out of backup mode.  Default
-                      value is false Determine whether a role is allowed to initiate
-                      streaming replication or put the system in and out of backup
-                      mode
-                    type: boolean
-                  roles:
-                    description: Defines list of roles which will be granted to this
-                      new role. Role(s) to grant to this new role
+                  objects:
+                    description: The objects upon which to grant the privileges. An
+                      empty list (the default) means to grant permissions on all objects
+                      of the specified type. You cannot specify this option if the
+                      object_type is database or schema. The specific objects to grant
+                      privileges on for this role (empty means all objects of the
+                      requested type)
                     items:
                       type: string
                     type: array
-                  searchPath:
-                    description: Alters the search path of this new role. Note that
-                      due to limitations in the implementation, values cannot contain
-                      the substring ", ". Sets the role's search path
+                  privileges:
+                    description: 'The list of privileges to grant. There are different
+                      kinds of privileges: SELECT, INSERT, UPDATE, DELETE, TRUNCATE,
+                      REFERENCES, TRIGGER, CREATE, CONNECT, TEMPORARY, EXECUTE, and
+                      USAGE. An empty list could be provided to revoke all privileges
+                      for this role. The list of privileges to grant'
                     items:
                       type: string
                     type: array
-                  skipDropRole:
-                    description: When a PostgreSQL ROLE exists in multiple databases
-                      and the ROLE is dropped, the cleanup of ownership of objects
-                      in each of the respective databases must occur before the ROLE
-                      can be dropped from the catalog.  Set this option to true when
-                      there are multiple databases in a PostgreSQL cluster using the
-                      same PostgreSQL ROLE for object ownership. This is the third
-                      and final step taken when removing a ROLE from a database. Skip
-                      actually running the DROP ROLE command when removing a ROLE
-                      from PostgreSQL
-                    type: boolean
-                  skipReassignOwned:
-                    description: When a PostgreSQL ROLE exists in multiple databases
-                      and the ROLE is dropped, a REASSIGN OWNED in must be executed
-                      on each of the respective databases before the DROP ROLE can
-                      be executed to dropped the ROLE from the catalog.  This is the
-                      first and second steps taken when removing a ROLE from a database
-                      (the second step being an implicit DROP OWNED). Skip actually
-                      running the REASSIGN OWNED command when removing a role from
-                      PostgreSQL
-                    type: boolean
-                  statementTimeout:
-                    description: Defines statement_timeout setting for this role which
-                      allows to abort any statement that takes more than the specified
-                      amount of time. Abort any statement that takes more than the
-                      specified number of milliseconds
-                    type: number
-                  superuser:
-                    description: Defines whether the role is a "superuser", and therefore
-                      can override all access restrictions within the database.  Default
-                      value is false. Determine whether the new role is a "superuser"
-                    type: boolean
-                  validUntil:
-                    description: Defines the date and time after which the role's
-                      password is no longer valid.  Established connections past this
-                      valid_time will have to be manually terminated.  This value
-                      corresponds to a PostgreSQL datetime. If omitted or the magic
-                      value NULL is used, valid_until will be set to infinity.  Default
-                      is NULL, therefore infinity. Sets a date and time after which
-                      the role's password is no longer valid
+                  role:
+                    description: The name of the role to grant privileges on, Set
+                      it to "public" for all roles. The name of the role to grant
+                      privileges on
                     type: string
+                  schema:
+                    description: The database schema to grant privileges on for this
+                      role The database schema to grant privileges on for this role
+                    type: string
+                  withGrantOption:
+                    description: Whether the recipient of these privileges can grant
+                      the same privileges to others. Defaults to false. Permit the
+                      grant recipient to grant it to others
+                    type: boolean
+                required:
+                - database
+                - objectType
+                - privileges
+                - role
                 type: object
               providerConfigRef:
                 default:
@@ -367,7 +287,7 @@ spec:
             - forProvider
             type: object
           status:
-            description: RoleStatus defines the observed state of Role.
+            description: GrantStatus defines the observed state of Grant.
             properties:
               atProvider:
                 properties:

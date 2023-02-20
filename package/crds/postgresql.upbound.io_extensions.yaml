@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: grants.postgresql.postgresql.upbound.io
+  name: extensions.postgresql.upbound.io
 spec:
-  group: postgresql.postgresql.upbound.io
+  group: postgresql.upbound.io
   names:
     categories:
     - crossplane
     - managed
     - postgresql
-    kind: Grant
-    listKind: GrantList
-    plural: grants
-    singular: grant
+    kind: Extension
+    listKind: ExtensionList
+    plural: extensions
+    singular: extension
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,8 +35,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Grant is the Schema for the Grants API. Creates and manages privileges
-          given to a user for a database schema.
+        description: Extension is the Schema for the Extensions API. Creates and manages
+          an extension on a PostgreSQL server.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -51,7 +51,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: GrantSpec defines the desired state of Grant
+            description: ExtensionSpec defines the desired state of Extension
             properties:
               deletionPolicy:
                 default: Delete
@@ -64,56 +64,37 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  createCascade:
+                    description: 'When true, will also create any extensions that
+                      this extension depends on that are not already installed. (Default:
+                      false) When true, will also create any extensions that this
+                      extension depends on that are not already installed'
+                    type: boolean
                   database:
-                    description: The database to grant privileges on for this role.
-                      The database to grant privileges on for this role
+                    description: Which database to create the extension on. Defaults
+                      to provider database. Sets the database to add the extension
+                      to
                     type: string
-                  objectType:
-                    description: 'The PostgreSQL object type to grant the privileges
-                      on (one of: database, schema, table, sequence, function, procedure,
-                      routine, foreign_data_wrapper, foreign_server). The PostgreSQL
-                      object type to grant the privileges on (one of: database, function,
-                      procedure, routine, schema, sequence, table, foreign_data_wrapper,
-                      foreign_server)'
-                    type: string
-                  objects:
-                    description: The objects upon which to grant the privileges. An
-                      empty list (the default) means to grant permissions on all objects
-                      of the specified type. You cannot specify this option if the
-                      object_type is database or schema. The specific objects to grant
-                      privileges on for this role (empty means all objects of the
-                      requested type)
-                    items:
-                      type: string
-                    type: array
-                  privileges:
-                    description: 'The list of privileges to grant. There are different
-                      kinds of privileges: SELECT, INSERT, UPDATE, DELETE, TRUNCATE,
-                      REFERENCES, TRIGGER, CREATE, CONNECT, TEMPORARY, EXECUTE, and
-                      USAGE. An empty list could be provided to revoke all privileges
-                      for this role. The list of privileges to grant'
-                    items:
-                      type: string
-                    type: array
-                  role:
-                    description: The name of the role to grant privileges on, Set
-                      it to "public" for all roles. The name of the role to grant
-                      privileges on
+                  dropCascade:
+                    description: 'When true, will also drop all the objects that depend
+                      on the extension, and in turn all objects that depend on those
+                      objects. (Default: false) When true, will also drop all the
+                      objects that depend on the extension, and in turn all objects
+                      that depend on those objects'
+                    type: boolean
+                  name:
+                    description: The name of the extension.
                     type: string
                   schema:
-                    description: The database schema to grant privileges on for this
-                      role The database schema to grant privileges on for this role
+                    description: Sets the schema of an extension. Sets the schema
+                      of an extension
                     type: string
-                  withGrantOption:
-                    description: Whether the recipient of these privileges can grant
-                      the same privileges to others. Defaults to false. Permit the
-                      grant recipient to grant it to others
-                    type: boolean
+                  version:
+                    description: Sets the version number of the extension. Sets the
+                      version number of the extension
+                    type: string
                 required:
-                - database
-                - objectType
-                - privileges
-                - role
+                - name
                 type: object
               providerConfigRef:
                 default:
@@ -287,7 +268,7 @@ spec:
             - forProvider
             type: object
           status:
-            description: GrantStatus defines the observed state of Grant.
+            description: ExtensionStatus defines the observed state of Extension.
             properties:
               atProvider:
                 properties:

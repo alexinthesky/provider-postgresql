@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: extensions.postgresql.postgresql.upbound.io
+  name: databases.postgresql.upbound.io
 spec:
-  group: postgresql.postgresql.upbound.io
+  group: postgresql.upbound.io
   names:
     categories:
     - crossplane
     - managed
     - postgresql
-    kind: Extension
-    listKind: ExtensionList
-    plural: extensions
-    singular: extension
+    kind: Database
+    listKind: DatabaseList
+    plural: databases
+    singular: database
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,8 +35,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Extension is the Schema for the Extensions API. Creates and manages
-          an extension on a PostgreSQL server.
+        description: Database is the Schema for the Databases API. Creates and manages
+          a database on a PostgreSQL server.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -51,7 +51,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ExtensionSpec defines the desired state of Extension
+            description: DatabaseSpec defines the desired state of Database
             properties:
               deletionPolicy:
                 default: Delete
@@ -64,37 +64,72 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  createCascade:
-                    description: 'When true, will also create any extensions that
-                      this extension depends on that are not already installed. (Default:
-                      false) When true, will also create any extensions that this
-                      extension depends on that are not already installed'
+                  allowConnections:
+                    description: If false then no one can connect to this database.
+                      The default is true, allowing connections (except as restricted
+                      by other mechanisms, such as GRANT or REVOKE CONNECT). If false
+                      then no one can connect to this database
                     type: boolean
-                  database:
-                    description: Which database to create the extension on. Defaults
-                      to provider database. Sets the database to add the extension
-                      to
+                  connectionLimit:
+                    description: How many concurrent connections can be established
+                      to this database. -1 (the default) means no limit. How many
+                      concurrent connections can be made to this database
+                    type: number
+                  encoding:
+                    description: Character set encoding to use in the database. Specify
+                      a string constant (e.g. UTF8 or SQL_ASCII), or an integer encoding
+                      number.  If unset or set to an empty string the default encoding
+                      is set to UTF8.  Changing this value will force the creation
+                      of a new resource as this value can only be changed when a database
+                      is created. Character set encoding to use in the new database
                     type: string
-                  dropCascade:
-                    description: 'When true, will also drop all the objects that depend
-                      on the extension, and in turn all objects that depend on those
-                      objects. (Default: false) When true, will also drop all the
-                      objects that depend on the extension, and in turn all objects
-                      that depend on those objects'
+                  isTemplate:
+                    description: If true, then this database can be cloned by any
+                      user with CREATEDB privileges; if false (the default), then
+                      only superusers or the owner of the database can clone it. If
+                      true, then this database can be cloned by any user with CREATEDB
+                      privileges
                     type: boolean
-                  name:
-                    description: The name of the extension.
+                  lcCollate:
+                    description: Collation order (LC_COLLATE) to use in the database.  This
+                      affects the sort order applied to strings, e.g. in queries with
+                      ORDER BY, as well as the order used in indexes on text columns.
+                      If unset or set to an empty string the default collation is
+                      set to C.  Changing this value will force the creation of a
+                      new resource as this value can only be changed when a database
+                      is created. Collation order (LC_COLLATE) to use in the new database
                     type: string
-                  schema:
-                    description: Sets the schema of an extension. Sets the schema
-                      of an extension
+                  lcCtype:
+                    description: Character classification (LC_CTYPE) to use in the
+                      database. This affects the categorization of characters, e.g.
+                      lower, upper and digit. If unset or set to an empty string the
+                      default character classification is set to C.  Changing this
+                      value will force the creation of a new resource as this value
+                      can only be changed when a database is created. Character classification
+                      (LC_CTYPE) to use in the new database
                     type: string
-                  version:
-                    description: Sets the version number of the extension. Sets the
-                      version number of the extension
+                  owner:
+                    description: The role name of the user who will own the database,
+                      or DEFAULT to use the default (namely, the user executing the
+                      command). To create a database owned by another role or to change
+                      the owner of an existing database, you must be a direct or indirect
+                      member of the specified role, or the username in the provider
+                      is a superuser. The ROLE which owns the database
                     type: string
-                required:
-                - name
+                  tablespaceName:
+                    description: The name of the tablespace that will be associated
+                      with the database, or DEFAULT to use the template database's
+                      tablespace.  This tablespace will be the default tablespace
+                      used for objects created in this database. The name of the tablespace
+                      that will be associated with the new database
+                    type: string
+                  template:
+                    description: The name of the template database from which to create
+                      the database, or DEFAULT to use the default template (template0).  Changing
+                      this value will force the creation of a new resource as this
+                      value can only be changed when a database is created. The name
+                      of the template from which to create the new database
+                    type: string
                 type: object
               providerConfigRef:
                 default:
@@ -268,7 +303,7 @@ spec:
             - forProvider
             type: object
           status:
-            description: ExtensionStatus defines the observed state of Extension.
+            description: DatabaseStatus defines the observed state of Database.
             properties:
               atProvider:
                 properties:
