@@ -9,10 +9,19 @@ import "github.com/upbound/upjet/pkg/config"
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 var ExternalNameConfigs = map[string]config.ExternalName{
-	"postgresql_database":  config.NameAsIdentifier,
-	"postgresql_role":      config.NameAsIdentifier,
-	"postgresql_grant":     config.NameAsIdentifier,
-	"postgresql_extension": config.IdentifierFromProvider,
+	"postgresql_database":                  config.NameAsIdentifier,
+	"postgresql_default_privileges":        config.IdentifierFromProvider,
+	"postgresql_extension":                 config.IdentifierFromProvider,
+	"postgresql_function":                  config.IdentifierFromProvider,
+	"postgresql_grant":                     config.NameAsIdentifier,
+	"postgresql_physical_replication_slot": config.NameAsIdentifier,
+	"postgresql_publication":               config.NameAsIdentifier,
+	"postgresql_replication_slot":          config.NameAsIdentifier,
+	"postgresql_role":                      config.NameAsIdentifier,
+	"postgresql_schema":                    config.NameAsIdentifier,
+	"postgresql_server":                    config.IdentifierFromProvider,
+	"postgresql_subscription":              config.NameAsIdentifier,
+	"postgresql_user_mapping":              config.IdentifierFromProvider,
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

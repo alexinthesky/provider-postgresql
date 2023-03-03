@@ -62,11 +62,17 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 
 		ps.Configuration = map[string]any{}
 
-		if pc.Spec.SSLMode == "" {
-			pc.Spec.SSLMode = "require"
+		if pc.Spec.SSLMode != "" {
+			ps.Configuration[keySslMode] = pc.Spec.SSLMode
 		}
 
-		ps.Configuration[keySslMode] = pc.Spec.SSLMode
+		if pc.Spec.Database != "" {
+			ps.Configuration[keyDatabase] = pc.Spec.Database
+		}
+
+		if pc.Spec.ConnectTimeout != "" {
+			ps.Configuration[keyConnectTimeout] = pc.Spec.ConnectTimeout
+		}
 
 		hostSecret := pc.Spec.Credentials.CommonCredentialSelectors
 		hostSecret.SecretRef.Key = keyHost

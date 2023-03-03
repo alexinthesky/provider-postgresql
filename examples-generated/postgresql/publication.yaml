@@ -1,0 +1,16 @@
+apiVersion: postgresql.upbound.io/v1alpha1
+kind: Publication
+metadata:
+  annotations:
+    meta.upbound.io/example-id: postgresql/v1alpha1/publication
+  labels:
+    testing.upbound.io/example-name: publication
+  name: publication
+spec:
+  forProvider:
+    tables:
+    - public.test
+    - another_schema.test
+
+---
+

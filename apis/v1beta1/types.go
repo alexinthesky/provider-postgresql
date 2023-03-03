@@ -16,7 +16,9 @@ type ProviderConfigSpec struct {
 	Credentials ProviderCredentials `json:"credentials"`
 	// +optional
 	// +kubebuilder:validation:Enum=disable;require;verify-ca;verify-full
-	SSLMode string `json:"sslmode,omitempty"`
+	SSLMode        string `json:"sslmode,omitempty"`
+	Database       string `json:"database,omitempty"`
+	ConnectTimeout string `json:"connect_timeout,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.

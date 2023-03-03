@@ -47,6 +47,8 @@ spec:
           spec:
             description: A ProviderConfigSpec defines the desired state of a ProviderConfig.
             properties:
+              connect_timeout:
+                type: string
               credentials:
                 description: Credentials required to authenticate to this provider.
                 properties:
@@ -100,6 +102,8 @@ spec:
                 required:
                 - source
                 type: object
+              database:
+                type: string
               sslmode:
                 enum:
                 - disable
